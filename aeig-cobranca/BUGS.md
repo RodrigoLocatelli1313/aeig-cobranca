@@ -62,7 +62,7 @@ O que mudou, defeito por defeito:
 Memória de cálculo (15/10): multa = 189,90 × 2% = 3,798; juros = 189,90 × 0,033% × 10 = 0,62667;
 total = 189,90 + 3,798 + 0,62667 = 194,32467 → **R$ 194,32**.
 
-No pior caso da tabela, a função original cobrava **cerca de R$ 38 a mais** que o devido (232,44 contra 194,32).
+No pior caso da tabela, a função original cobrava **R$ 38,11 a mais** que o devido (232,44 contra 194,32).
 
 Os quatro valores corretos, as bordas (mês/ano virando, meio centavo) e as datas inválidas estão
 cobertos em [`test/multa.test.ts`](test/multa.test.ts).
