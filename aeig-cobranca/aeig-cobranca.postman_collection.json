@@ -1,0 +1,430 @@
+{
+  "info": {
+    "name": "API de cobrança AEIG",
+    "description": "Fluxo completo da API. Rode na ORDEM e com banco novo (apague a pasta data/ e reinicie com npm start), porque os exemplos usam associado 1 e nosso número 00000001. O nome de cada requisição indica o status HTTP esperado. Importa no Postman e no Insomnia.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Saúde da API (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/saude",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "saude"
+          ]
+        }
+      }
+    },
+    {
+      "name": "2. Cadastrar associado (201)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/associados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "associados"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Maria Souza\",\n  \"cpf\": \"529.982.247-25\",\n  \"valor_mensalidade\": 189.9\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "3. CPF inválido (422)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/associados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "associados"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Fulano de Tal\",\n  \"cpf\": \"529.982.247-24\",\n  \"valor_mensalidade\": 100\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "4. CPF repetido (409)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/associados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "associados"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Maria de novo\",\n  \"cpf\": \"52998224725\",\n  \"valor_mensalidade\": 100\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "5. Gerar cobrança de 2026-10 (201)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/cobrancas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "cobrancas"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"associado_id\": 1,\n  \"mes_referencia\": \"2026-10\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "6. Cobrança repetida no mesmo mês (409)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/cobrancas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "cobrancas"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"associado_id\": 1,\n  \"mes_referencia\": \"2026-10\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "7. Consultar cobrança (200, PENDENTE)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/cobrancas/00000001",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "cobrancas",
+            "00000001"
+          ]
+        }
+      }
+    },
+    {
+      "name": "8. Webhook: pagamento (200, processado)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/webhooks/pagamento",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "webhooks",
+            "pagamento"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id_evento\": \"evt_000123\",\n  \"nosso_numero\": \"00000001\",\n  \"data_pagamento\": \"2026-10-15\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Sem WEBHOOK_SECRET definido, a assinatura não é exigida. Com ele, veja o exemplo com openssl no README."
+      }
+    },
+    {
+      "name": "9. Webhook: mesmo aviso reenviado (200, duplicado)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/webhooks/pagamento",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "webhooks",
+            "pagamento"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id_evento\": \"evt_000123\",\n  \"nosso_numero\": \"00000001\",\n  \"data_pagamento\": \"2026-10-15\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "10. Consultar cobrança (200, PAGA)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/cobrancas/00000001",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "cobrancas",
+            "00000001"
+          ]
+        }
+      }
+    },
+    {
+      "name": "11. Webhook: nosso número inexistente (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/webhooks/pagamento",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "webhooks",
+            "pagamento"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id_evento\": \"evt_999\",\n  \"nosso_numero\": \"99999999\",\n  \"data_pagamento\": \"2026-10-15\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
